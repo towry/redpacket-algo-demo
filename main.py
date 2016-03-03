@@ -6,6 +6,7 @@ from os import sys, path
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 import math
+import random
 from random import uniform
 from random import expovariate as exp
 from scripts.filelog import Filelog
@@ -105,15 +106,14 @@ def _average_rounds(flog):
         total_rounds -= 1
 
         total_money = 10000
-        half_money = total_money / 2
+        # half_money = total_money / 2
         max = 100
         min = 1
-        middle = (max + min) / 2
 
-        half_less = _average_round(half_money, middle, min)
-        half_more = _average_round(half_money, max, middle)
-        half_less.extend(half_more)
-        res = half_less
+        # half_less = _average_round(half_money, middle, min)
+        # half_more = _average_round(half_money, max, middle)
+        # half_less.extend(half_more)
+        # res = half_less
 
         flog.round(res)
         # res.sort()
