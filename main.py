@@ -101,16 +101,15 @@ def _average_round(total_money, max, min):
 
     return res
 
-def _average_rounds(flog, json_only=False):
+def _average_rounds(flog, total_money, max, min, json_only=False):
     total_rounds = 100
     total_list = []
     while total_rounds > 0:
         total_rounds -= 1
 
-        total_money = 1000
-        # half_money = total_money / 2
-        max = 100
-        min = 2
+        # # half_money = total_money / 2
+        # max = 100
+        # min = 2
 
         # half_less = _average_round(half_money, middle, min)
         # half_more = _average_round(half_money, max, middle)
@@ -149,14 +148,10 @@ def _exp_round(total_money, max, min):
     return res
 
 
-def _exp_rounds(flog):
+def _exp_rounds(flog, total_money, max, min, json_only=False):
     total_rounds = 100
     while total_rounds > 0:
         total_rounds -= 1
-
-        total_money = 200
-        max = 11
-        min = 10
         
         res = _exp_round(total_money, max, min)
 
@@ -164,15 +159,44 @@ def _exp_rounds(flog):
     flog.done()
         
 
+def is_int(n):
+    try:
+        int(n)
+        return True
+    except Exception as e:
+        return False
 
 
 if __name__ == '__main__':
+
+    typo = raw_input("Please select the type: [a, e]\na: average\ne:expo\n")
+    if typo != 'a' and typo != 'e':
+        exit("wrong choice :" + typo)
+
+    money = raw_input("Please input the total money:\n")
+    if not is_int(money):
+        exit("wrong argument")
+    _max = raw_input("Please input the max money:\n")
+    if not is_int(_max):
+        exit("wrong argument")
+    _min = raw_input("Please input the min money:\n")
+    if not is_int(_min):
+        exit("wrong argument")
+
     root = path.join(path.dirname(path.abspath(__file__)), '_results')
 
-    # prefix = 'exp'
-    prefix = 'average'
+    if typo == 'a':
+        prefix = 'average'
+    else:
+        prefix = 'exp'
+
+    money = int(money)
+    _max = int(_max)
+    _min = int(_min)
 
     flog = Filelog(root, prefix)
 
-    # _exp_rounds(flog)
-    _average_rounds(flog, True)
+    if typo == 'a':
+        _average_rounds(flog, money, _max, _min, True)
+    else:
+        _exp_rounds(flog, money, _max, _min, True)

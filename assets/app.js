@@ -7,7 +7,7 @@
 	var config = window.config || {};
 
 	var chart = {
-		create: function (data, max, min, index) {
+		create: function (total_money, data, max, min, index) {
 			if (max < min) {
 				throw new TypeError("max < min");
 			}
@@ -18,7 +18,7 @@
             
             data.sort();
 
-			this._init(data, max, min, index);
+			this._init(total_money, data, max, min, index);
 			this._makeChart();
 		},
 
@@ -30,7 +30,9 @@
 
             var p = document.createElement('div');
             p.className = 'data';
-            p.innerHTML = this._stringify(this._data);
+
+            var contents = this._stringify(this._data);
+            p.innerHTML = '总钱数: ' + this._total_money + ', 最大值: ' + this._max + ', 最小值: ' + this._min + ' <br />' + contents;
 
             this._chartNode.appendChild(p);
 
@@ -41,13 +43,14 @@
             return data.join(', ');
         },
 
-		_init: function (data, max, min, index) {
+		_init: function (total_money, data, max, min, index) {
 			this._id = index;
 			this._chartNode = document.createElement('div');
 			this._chartNode.className = 'chart chart_' + this._id++;
 			this._data = data;
 			this._max = max;
 			this._min = min;
+            this._total_money = total_money;
 		},
 
 		_makeChart: function () {
@@ -97,7 +100,7 @@
 				var min = d.min;
 				var darr = d.data;
 
-				chart.create(darr, max, min, index);
+				chart.create(d.total_money, darr, max, min, index);
 				chart.append(parentNode);
 			});
 		}

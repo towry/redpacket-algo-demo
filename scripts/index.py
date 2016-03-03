@@ -30,8 +30,9 @@ def get_title(str):
     f = n[-2:]
     ym = n[len(n) - 2]
     md = n[len(n) - 1]
+    p = n[0]
 
-    return ym[:-4] + '/' + ym[4:6] + '/' + ym[-2:] + ' ' + md[:2] + ':' + md[2:4] + ':' + md[-2:]
+    return p + ' ' + ym[:-4] + '/' + ym[4:6] + '/' + ym[-2:] + ' ' + md[:2] + ':' + md[2:4] + ':' + md[-2:]
 
 if __name__ == '__main__':
 
