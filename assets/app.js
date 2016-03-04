@@ -16,7 +16,9 @@
 				throw new TypeError("data must be an array");
 			}
             
-            data.sort();
+            data.sort(function (a, b) {
+                return a - b;
+            });
 
 			this._init(total_money, data, max, min, index);
 			this._makeChart();

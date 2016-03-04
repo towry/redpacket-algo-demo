@@ -74,8 +74,14 @@ def get_exp_money(pack, max, min):
         pack.remain_money = 0
         return money
 
-    r = uniform(min, max)
-    money = r
+    average = (max + min) / 2
+    hdelta = max - min
+    lambd = 1.0 / average
+    money = exp(lambd)
+    if money < min:
+        money = min + hdelta * ((min - money) / min)
+    if money > max:
+        money = max - hdelta * ((money - max) / money)
 
     # TODO: 这里要特意处理，剩余的钱和min的钱
     if money > pack.remain_money:
@@ -150,12 +156,23 @@ def _exp_round(total_money, max, min):
 
 def _exp_rounds(flog, total_money, max, min, json_only=False):
     total_rounds = 100
+    total_list = []
     while total_rounds > 0:
         total_rounds -= 1
         
         res = _exp_round(total_money, max, min)
 
-        flog.round(res)
+        if json_only:
+            dic = dict()
+            dic['data'] = res 
+            dic['max'] = max 
+            dic['min'] = min 
+            dic['total_money'] = total_money
+            total_list.append(dic)
+        else:
+            dic = res 
+            flog.round(dic, json_only)
+    flog.round(total_list, json_only)
     flog.done()
         
 
