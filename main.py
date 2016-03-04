@@ -54,15 +54,7 @@ def get_money(pack, max, min):
     pack.remain_money -= money
     return money
 
-"""
-max = 100
-min = 1
-average = (100 + 1) / 2 = 50
-left_max = average
-right_min = average
-left_money = total_money + (total_money * random / 2)
-right_money = total_money - left_money
-"""
+
 def get_exp_money(pack, max, min):
     if max <= min:
         raise ValueError("max < min")
@@ -71,23 +63,29 @@ def get_exp_money(pack, max, min):
         # 剩余的钱少于min，发还是不发呢?
         money = pack.remain_money
         money = math.floor(money * 100) / 100
-        pack.remain_money = 0
+        pack.remain_money = 0.0
         return money
 
     average = (max + min) / 2
     hdelta = max - min
-    lambd = 1.0 / average
+    lambd = 1.0 / (average * 0.8)
+    random.seed()
     money = exp(lambd)
+
+    # use scale
     if money < min:
-        money = min + hdelta * ((min - money) / min)
+        # if it wants to be small, let it be small and we force it.
+        # money = min + (hdelta / 3.0) * ((min - money) / min)
+        money = min + ((min - money) / (max + min)) * hdelta / 2
     if money > max:
-        money = max - hdelta * ((money - max) / money)
+        # if it wants to be big, let it be big if it is luck.
+        money = min + (((money - max) / (money))) * hdelta
 
     # TODO: 这里要特意处理，剩余的钱和min的钱
     if money > pack.remain_money:
         money = pack.remain_money
         money = math.floor(money * 100) / 100
-        pack.remain_money = 0
+        pack.remain_money = 0.0
         return money
 
     money = math.floor(money * 100) / 100
@@ -186,7 +184,7 @@ def is_int(n):
 
 if __name__ == '__main__':
 
-    typo = raw_input("Please select the type: [a, e]\na: average\ne:expo\n")
+    typo = raw_input("Please select the type: [a, e]\na: average\ne: expo\n")
     if typo != 'a' and typo != 'e':
         exit("wrong choice :" + typo)
 
@@ -198,6 +196,9 @@ if __name__ == '__main__':
         exit("wrong argument")
     _min = raw_input("Please input the min money:\n")
     if not is_int(_min):
+        exit("wrong argument")
+
+    if money < 0 or _max < 0 or _min < 0 or money < _max:
         exit("wrong argument")
 
     root = path.join(path.dirname(path.abspath(__file__)), '_results')

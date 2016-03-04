@@ -5,6 +5,8 @@
 (function () {
 	var parentNode = document.querySelector('.charts');
 	var config = window.config || {};
+    var info = document.querySelector('.info');
+    var lastId = null;
 
 	var chart = {
 		create: function (total_money, data, max, min, index) {
@@ -30,13 +32,26 @@
 			}
 			node.appendChild(this._chartNode);
 
+            var self = this;
+            d3.select(this._chartNode)
+                .on('mouseover', function () {
+                    var id = this.dataset.id;
+                    if (lastId !== null) {
+                        d3.select('.data_' + lastId)
+                            .attr('class', 'data data_' + lastId);
+                    }
+                    lastId = id;
+                    d3.select('.data_' + id)
+                        .attr('class', 'data data_' + id + ' hover');
+                })
+
             var p = document.createElement('div');
-            p.className = 'data';
+            p.className = 'data data_' + (this._id - 1);
 
             var contents = this._stringify(this._data);
             p.innerHTML = '总钱数: ' + this._total_money + ', 最大值: ' + this._max + ', 最小值: ' + this._min + ' <br />' + contents;
 
-            this._chartNode.appendChild(p);
+            info.appendChild(p);
 
             this._chartNode = null;
 		},
@@ -48,7 +63,9 @@
 		_init: function (total_money, data, max, min, index) {
 			this._id = index;
 			this._chartNode = document.createElement('div');
-			this._chartNode.className = 'chart chart_' + this._id++;
+			this._chartNode.className = 'chart chart_' + this._id;
+            this._chartNode.setAttribute('data-id', this._id);
+            this._id++;
 			this._data = data;
 			this._max = max;
 			this._min = min;
@@ -307,10 +324,15 @@ function lineChart() {
 
         data = data[0];
 
+
+
         transfer_x.domain([0, data.length]);
         transfer_y.domain([d3.min(data), d3.max(data)]);
 
         selection.each(function (values) {
+            var length = data.length;
+            var middle = (d3.min(data) + d3.max(data)) / 2;
+
             var vis = d3.select(this)
             .append("svg:svg")
             .attr("width", svg_width)
@@ -319,7 +341,7 @@ function lineChart() {
             var draw_line = d3.svg.line()
             .x(function(d,i) { return transfer_x(i); })
             .y(function(d) { return transfer_y(d); })
-            .interpolate("cardinal")
+            .interpolate("basis")
 
             var g = vis.append("svg:g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -345,8 +367,27 @@ function lineChart() {
             .style("text-anchor", "end")
             .attr("transform", "rotate(-90)")
             .text("钱数");
-            })
-    }
 
+            // lenght middle
+            var xline = g.append('line')
+                .attr('class', 'x-middle')
+                .attr('y1', chart_height)
+                .attr('y2', 0)
+                .style('stroke-width', 1);
+            xline.attr('transform', 'translate(' + transfer_x(length/2) + ',' + 0 + ')');
+
+
+            // price middle line
+            var yline = g.append('line')
+                .attr('class', 'y-middle')
+                .attr('x1', 0)
+                .attr('x2', chart_width)
+                .style('stroke-width', 1);
+
+            yline.attr('transform', 'translate(' + 0 + ',' + transfer_y(middle) + ')');
+
+            /** end */
+            });
+    }
     return chart;
 }

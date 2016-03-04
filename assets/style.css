@@ -17,6 +17,14 @@ line {
   fill: black;
 }
 
+.x-middle {
+  stroke: red;
+}
+
+.y-middle {
+	stroke: green;
+}
+
 /* ------------------------------------------*/
 body {
 	padding-top: 20px;
@@ -37,13 +45,17 @@ body {
 	float: left;
 }
 
-.chart .data {
+.info {
+	min-height: 50px;
+	position: fixed;
+	top: 0;
+	width: 60%;
+	left: 10%;
+}
+
+.info .data {
 	font-size: 13px;
 	color: #fff;
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
 	padding: 10px 10px;
 	background-color: #0f9d58;
 	display: none;
@@ -52,7 +64,7 @@ body {
 	z-index: 222;
 }
 
-.chart:hover .data {
+.data.hover {
 	display: block;
-	opacity: 1;
+	opacity: 0.9;
 }
